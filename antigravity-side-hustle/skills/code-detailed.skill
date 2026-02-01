@@ -1,0 +1,40 @@
+---
+name: code-detailed
+description: "High-precision code modification tool. Employs a 'Read-Plan-Patch' protocol to eliminate hallucination in large files."
+---
+
+# Detailed Coder (The Precision Fixer)
+
+## Use this skill when
+- Modifying logic in files > 100 lines.
+- Performing targeted refactors where global context is unnecessary.
+- Injecting imports, changing function signatures, or fixing specific bugs.
+
+## Instructions
+
+1.  **Target Acquisition**:
+    - Use `grep -n` to find the target line numbers.
+    - Use `sed -n 'X,Yp'` to read ONLY the necessary block plus a 10-line buffer for context.
+
+2.  **The "Dry Run" Plan**:
+    - Before editing, output a `diff`-style block showing the `SEARCH` and `REPLACE` strings.
+    - Validate that the `SEARCH` string is unique within the file to avoid collateral damage.
+
+3.  **Surgical Execution**:
+    - **Preferred Method**: Use a Python-based patching script (JIT Engineering) to handle the replacement. This avoids the escaping issues of `sed`.
+    - **Fallback Method**: Use `patch` utility if a `.diff` file is generated.
+
+4.  **Post-Op Verification**:
+    - Run a syntax check immediately (e.g., `python -m py_compile` or `tsc --noEmit`).
+    - Verify that no braces, brackets, or indentation levels were orphaned.
+
+## System Capability: JIT Patching
+If the edit is complex, you are authorized to write a temporary Python script to handle the transformation:
+```python
+# Example JIT Tool for Code Surgeon
+with open('file.py', 'r') as f:
+    content = f.read()
+new_content = content.replace(search_string, replace_string)
+with open('file.py', 'w') as f:
+    f.write(new_content)
+```

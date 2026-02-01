@@ -1,0 +1,85 @@
+---
+name: repo-profiler
+description: "Polyglot analysis engine. Scans codebase for Node.js, Python, and Infrastructure signals to prescribe the exact agent swarm needed."
+---
+
+# Unified Repository Profiler
+
+## Use this skill when
+- Starting a new project to determine which agents to build.
+- The stack includes mixed technologies (e.g., Next.js frontend + Python backend).
+
+## Instructions
+
+1.  **Fingerprint the Stack**:
+    - **Node/JS**: Read `package.json`. Look for:
+        - `next` > **Next.js Architect**
+        - `@tanstack/react-query` > **Async State Manager**
+        - `prisma` or `drizzle-orm` > **TypeScript DB Admin**
+        - `tailwindcss` > **UI/UX Stylist**
+    - **Python**: Read `pyproject.toml` or `requirements.txt`. Look for:
+        - `django` without `djangorestframework` > **Monolith Classic**
+        - `django` with `djangorestframework` > **Headless API Interface**
+        - `fastapi` > **API Interface Designer**
+        - `pandas` / `numpy` > **Data Wrangler**
+        - `sqlalchemy` / `alembic` > **Python DB Migrator**
+    - **Infra**: Look for `Dockerfile`, `docker-compose.yml`, or `terraform`.
+
+2.  **Map to Capabilities**:
+    - Compare detected technologies against the current contents of `.agent/skills/` and `~/.agent/skills/`.
+    - Identify **MISSING** skills that are required for this specific stack.
+
+3.  **Generate Structured Artifact**:
+    - You MUST output a JSON file to `_artifacts/skill_gap_analysis.json`.
+    - This file acts as the "shopping list" for the Prime Agent.
+
+## Output Schema (Strict JSON)
+Write the following structure to `_artifacts/skill_gap_analysis.json`:
+
+```json
+{
+  "project_name": "analyzed_repo",
+  "detected_stack": ["Next.js", "FastAPI", "TanStack Query"],
+  "infrastructure": ["Docker", "Github Actions"],
+  "recommended_agents_to_build": [
+    {
+      "name": "nextjs-architect",
+      "description": "Specialist in App Router, React Server Components, and Next.js 14 patterns.",
+      "trigger_reason": "Found 'next' in dependencies."
+    },
+    {
+      "name": "tanstack-query-expert",
+      "description": "Optimizes caching, pre-fetching, and optimistic updates using React Query.",
+      "trigger_reason": "Found '@tanstack/react-query'."
+    },
+    {
+      "name": "pydantic-engineer",
+      "description": "Strict type validator for Python backend services.",
+      "trigger_reason": "Found 'fastapi' and 'pydantic'."
+    }
+  ]
+}
+
+```
+
+## Human-Readable Summary
+
+After generating the JSON, output a brief summary in the chat:
+"Analysis complete. I have detected a **Next.js + Python** hybrid stack. I have queued **3 new agents** for construction in the analysis artifact."
+
+Sample Response:
+```markdown
+### How to use this output
+Now that the profiler outputs a clean JSON list (`recommended_agents_to_build`), you can simplify your **Prime Agent's** boot sequence to just loop over this list.
+
+**Update for `antigravity-prime.agent` (Initialization Phase):**
+
+### 0. Boot Sequence
+1.  **Profile**: Execute `repo-profiler` skill.
+2.  **Read**: Load `_artifacts/skill_gap_analysis.json`.
+3.  **Construct Swarm**:
+    - Iterate through `recommended_agents_to_build`.
+    - For each missing agent, invoke `skill_forge` passing the `name` and `description` from the JSON.
+    - *Result*: Your environment automatically "installs" the agents necessary to work on this specific codebase.
+
+```

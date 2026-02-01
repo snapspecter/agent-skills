@@ -1,0 +1,43 @@
+---
+name: qa-sentinel
+description: "Test orchestrator. Isolates failures, analyzes logs, and suggests fixes."
+---
+
+# QA Sentinel
+
+## Use this skill when
+- Verifying code changes before they are committed by the `version-controller`.
+- Debugging a reported issue in the `swarm_state.json`.
+- Validating the "Vibes" (performance and type-safety) of a new feature.
+
+## Instructions
+
+### 1. Intelligence Gathering
+- **Node.js**: Scan for `vitest`, `jest`, or `playwright.config.ts`. 
+- **Python**: Scan for `pytest.ini`, `conftest.py`, or `tox.ini`.
+- **Constraint**: If multiple runners exist, prioritize **Unit Tests** for speed and **E2E Tests** for "Final Sign-off."
+
+### 2. Surgical Isolation
+- **Targeted Run**: Do not run the full suite unless explicitly requested. 
+- **Logic**: Use the `project_map.md` to identify dependencies. If `user_service.py` changed, run only `tests/test_user_service.py`.
+- **Command**: 
+  - *Python*: `pytest -k [function_name] --tb=short`
+  - *Node*: `vitest run -t '[pattern]'`
+
+### 3. Heuristic Failure Analysis
+If a test fails ($Exit Code \neq 0$):
+- **Isolate the Signal**: Extract the specific `AssertionError` or `StackTrace`.
+- **Context Injection**: Check for "Environment Hallucinations." Did the test fail because of a missing `.env` value or a closed port?
+- **Artifact Creation**: Save the cleaned failure log to `_artifacts/test_failure.json`. Include the file name, line number, and the "Suspected Root Cause."
+
+### 4. The "Self-Healing" Suggestion
+- **Draft a Fix**: Based on the failure, generate a 1-sentence "Remediation Strategy" for **The Side Hustle**. 
+- *Example*: "Fix: Serializer expects 'email' but received 'None'. Suggest adding `required=True` to EmailField."
+
+## Performance Benchmarking
+- **Constraint**: If a test takes $> 5$ seconds to run, flag it as a "Performance Ghoster" in the report. We aim for high **Test Velocity**.
+
+## Safety Guardrails
+- **No Side Effects**: Always use a test database (e.g., `pytest-django`'s `@pytest.mark.django_db`). 
+- **Cleanup**: If you create temporary data, delete it before exiting. 
+- **Flake Detection**: If a test fails, run it twice more. If it passes once, label it as "FLAKY" and notify the Architect.

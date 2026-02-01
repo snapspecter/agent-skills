@@ -1,0 +1,44 @@
+---
+name: version-controller
+description: "Zero-Trust Git operator. Enforces Branch Isolation, Conventional Commits, and Pre-Commit Validation."
+---
+
+# Version Control Specialist
+
+## Use this skill when
+- Staging and committing changes to the repository.
+- Managing feature branches and merging "deliverables."
+- Pushing verified Artifacts to the remote origin.
+
+## Instructions
+
+### 0. Identity Verification
+- **Variable**: `$GIT_GLOBAL_IDENTITY`
+- **Instruction**: Before the first commit of any session, run `git config --get user.name` and `git config --get user.email`.
+- **Constraint**: If these values are empty or do not match the expected project standards, **STOP** and request the user to run `git config --global` commands. Do NOT attempt to spoof an identity or commit as 'Gemini' or 'Agent'.
+- **Attribution**: Ensure every commit hash is tied to the human architect's global signature to maintain the audit trail.
+
+### 1. The Environment Check
+- **Branch Safety**: Never commit directly to `main` or `master`. If on a protected branch, automatically create a feature branch: `feat/[ticket-id]-[brief-description]`.
+- **Staging Precision**: Use `git add -p` (patch mode) via the terminal if possible to review hunks. Otherwise, explicitly list files. **Prohibited**: `git add .` or `git add -A`.
+
+### 2. The "Green-Light" Protocol
+- **Constraint**: You are strictly forbidden from committing unless the `qa-sentinel` skill or a designated test script returns a **ZERO** exit code.
+- **Diff Audit**: Run `git diff --cached`. If the diff exceeds 200 lines, flag it for the Prime Architect (**The Side Hustle**) as a "High-Risk Commit."
+- **Secret Detection**: Scan the diff for strings matching API keys, `BEGIN RSA PRIVATE KEY`, or `.env` variables. **ABORT** immediately if found.
+
+### 3. The Conventional Commit Standard
+All commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+- **Format**: `<type>(<scope>): <description>`
+- **Types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`.
+- **Body**: Include a "Closes #[ticket-id]" reference to sync with `swarm_state.json`.
+
+### 4. The Sync Loop
+1. `git pull --rebase origin [branch]` to handle upstream changes.
+2. `git commit -m "[message]"`
+3. `git push origin [branch]`
+4. **Update State**: Invoke `scripts/swarm_state.py update_task --id [id] --status committed`.
+
+## Safety Guardrails
+- **Refuse Destructive Actions**: `git reset --hard` or `git push --force` require explicit human-in-the-loop (HITL) confirmation.
+- **Merge Conflicts**: If a conflict occurs, do not attempt to resolve it unless you are a specialized `conflict-resolution-agent`. Report the block to **The Side Hustle**.

@@ -1,0 +1,46 @@
+---
+name: style-enforcer
+description: "Automated style and lint gate. Runs ruff/black/isort for Python and eslint/prettier for JS/TS with minimal human intervention."
+---
+
+# Style Enforcer (The Brand Manager)
+
+## Use this skill when
+- A change touches Python or JS/TS code and must be made compliant before QA or commit.
+- The repo has lint/format configs that should be respected (pyproject, ruff.toml, .eslintrc, .prettierrc, etc.).
+- A fast cleanliness pass is required before handing work to QA Sentinel or Version Controller.
+
+## Detection & config sourcing
+- Python stack: prefer `pyproject.toml` / `ruff.toml` / `setup.cfg`. Honor tool-configured ignore paths.
+- JS/TS stack: honor `.eslintrc*`, `eslintConfig` in `package.json`, and `.prettierrc*`.
+- If configs are missing, run with sane defaults but warn the Prime Architect.
+
+## Toolchain (ordered)
+1) **Python** (idempotent, minimal churn)
+    - `ruff check --fix`
+    - `ruff format` (acts as Black replacement)
+    - If project explicitly uses Black: `black .` (respect config) after ruff.
+    - Imports: `ruff check --select I --fix` (isort-equivalent) if not already fixed.
+2) **JS/TS**
+    - `eslint --fix` scoped to changed files when possible; otherwise fallback to project scopes.
+    - `prettier --write` on the same file set. Keep `.md`/`.json` included if repo expects it.
+
+## Run discipline
+- Work on the smallest file set (changed/targeted files) to reduce churn.
+- Never overwrite lockfiles unless lint rules require formatting (rare; warn before changing).
+- If a tool is unavailable, install per project conventions (e.g., `npm ci` or `pnpm i --frozen-lockfile`, `uv pip install ruff`). Confirm with the Prime Architect if uncertain.
+
+## Failure handling
+- If a tool reports non-autofixable errors, mark the file as **Needs Review** and hand back to `code-detailed`/Code Surgeon with the exact error excerpt.
+- Do not suppress rules to make the run pass; surface the failing rule ID and location.
+- If formatting introduces large diffs (>200 lines), notify the Prime Architect before commit.
+
+## Guardrails
+- Do not create or delete config files without approval; reuse existing configs.
+- Keep edits deterministic—rerunning the same commands should be idempotent.
+- Never format generated artifacts (build/, dist/, .venv/, node_modules/).
+- If environment variables are required for tool execution, stub placeholders in `.env.example` (never real secrets) and alert the human.
+
+## Output expectations
+- After running, summarize which tools ran, which files changed, and any remaining blocking lint errors.
+- If nothing changed, explicitly state “Passed.”
