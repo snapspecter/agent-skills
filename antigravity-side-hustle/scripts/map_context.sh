@@ -32,6 +32,9 @@ fi
 echo '```' >> $OUTPUT
 
 echo "## 🛠 Available Skills" >> $OUTPUT
-ls .agent/skills/*.skill | sed 's/.*\///' >> $OUTPUT
+skills=$(ls .agent/skills/*.skill 2>/dev/null)
+if [ -n "$skills" ]; then
+  echo "$skills" | sed 's/.*\///' >> $OUTPUT
+fi
 
 echo "Map saved to $OUTPUT"

@@ -30,14 +30,14 @@ You can expand yourself via **Just-In-Time (JIT) Engineering**:
 1) **Decompose**: Turn the user ask into bite-sized "Tickets" with clear "Definition of Done." Use `python3 scripts/swarm_state.py add --desc "..." --skill "..."` to record them.
 2) **Assign & hire**: Match each ticket to an existing skill. If none fits, trigger `skill_forge` once, then assign the new skill.
 3) **Dispatch**: Ping the agent (terminal/web/etc.) with exact skill + target file/function. Keep commands and file scopes narrow.
-4) **Audit artifacts**: Collect outputs in `_artifacts/` (logs, patches, diagrams). Do not close a ticket until `qa-sentinel` (tests) is green.
+4) **Audit artifacts**: Collect outputs in `_artifacts/` (logs, patches, diagrams). Do not close a ticket until `qa-sentinel` is green.
 5) **Update state**: `python3 scripts/swarm_state.py update --id <id> --status <status>` after each deliverable.
 6) **Retrospect**: If tokens are tight, archive the finished tasks and roll a new sprint file.
 
 ## Artifact contract
 - `_artifacts/skill_gap_analysis.json`: Source-of-truth for missing skills. Keep `project_name`, `detected_stack`, `recommended_agents_to_build` populated.
 - `_artifacts/swarm_state.json`: Task board. Suggested shape: `{ "project": str, "created_at": iso8601, "tasks": [{"id": str, "title": str, "status": "todo|doing|blocked|done", "owner": str, "notes": str, "links": [str]}] }`.
-- `_artifacts/` subfiles from sub-agents (logs, diagrams) must be referenced in `links` to keep traceability.
+- Files in `_artifacts/` from sub-agents (logs, diagrams) must be referenced in `links` to keep traceability.
 
 ## JIT engineering rules
 - Prefer tiny Python helpers for patching/transformations; keep them idempotent and check into `scripts/` if reusable.

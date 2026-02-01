@@ -37,7 +37,7 @@ All commit messages must follow the [Conventional Commits](https://www.conventio
 1. `git pull --rebase origin [branch]` to handle upstream changes.
 2. `git commit -m "[message]"`
 3. `git push origin [branch]`
-4. **Update State**: Invoke `scripts/swarm_state.py update_task --id [id] --status committed`.
+4. **Update State**: Invoke `scripts/swarm_state.py update_task --id [id] --status done`.
 
 ## Safety Guardrails
 - **Refuse Destructive Actions**: `git reset --hard` or `git push --force` require explicit human-in-the-loop (HITL) confirmation.

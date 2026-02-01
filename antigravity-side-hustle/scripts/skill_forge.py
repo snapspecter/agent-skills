@@ -2,7 +2,8 @@ import sys
 import os
 
 def create_skill(name, description, instructions):
-    path = f".agent/skills/{name}.skill"
+    safe_name = os.path.basename(name)
+    path = f".agent/skills/{safe_name}.skill"
     content = f"""---
 name: {name}
 description: "{description}"
@@ -21,7 +22,8 @@ description: "{description}"
     print(f"Forged new skill: {path}")
 
 if __name__ == "__main__":
-    if len(sys.argv) < 4:
+        print("Usage: python skill_forge.py [name] [desc] [instructions]", file=sys.stderr)
+        sys.exit(1)
         print("Usage: python skill_forge.py [name] [desc] [instructions]")
     else:
         create_skill(sys.argv[1], sys.argv[2], sys.argv[3])

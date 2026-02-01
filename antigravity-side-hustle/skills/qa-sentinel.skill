@@ -25,7 +25,7 @@ description: "Test orchestrator. Isolates failures, analyzes logs, and suggests 
   - *Node*: `vitest run -t '[pattern]'`
 
 ### 3. Heuristic Failure Analysis
-If a test fails ($Exit Code \neq 0$):
+If a test fails (exit code ≠ 0):
 - **Isolate the Signal**: Extract the specific `AssertionError` or `StackTrace`.
 - **Context Injection**: Check for "Environment Hallucinations." Did the test fail because of a missing `.env` value or a closed port?
 - **Artifact Creation**: Save the cleaned failure log to `_artifacts/test_failure.json`. Include the file name, line number, and the "Suspected Root Cause."
@@ -35,7 +35,7 @@ If a test fails ($Exit Code \neq 0$):
 - *Example*: "Fix: Serializer expects 'email' but received 'None'. Suggest adding `required=True` to EmailField."
 
 ## Performance Benchmarking
-- **Constraint**: If a test takes $> 5$ seconds to run, flag it as a "Performance Ghoster" in the report. We aim for high **Test Velocity**.
+- **Constraint**: If a test takes > 5 seconds to run, flag it as a "Performance Ghoster" in the report. We aim for high **Test Velocity**.
 
 ## Safety Guardrails
 - **No Side Effects**: Always use a test database (e.g., `pytest-django`'s `@pytest.mark.django_db`). 

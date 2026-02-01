@@ -31,7 +31,10 @@ description: "Documentation chief. Keeps READMEs, API schemas, and inline docs a
 
 ## Guardrails
 - Do not invent endpoints or parameters—mirror the code and tests. If ambiguity exists, flag it to the Side Hustle Agent.
-- Avoid doc sprawl: prefer a single source of truth. Update the canonical location instead of creating duplicates; if a new doc supersedes an old one, deprecate and remove the old copy, and cross-link rather than copy-paste.
+- Avoid doc sprawl: prefer a single source of truth.
+  - Update the canonical location instead of creating duplicates.
+  - If a new doc supersedes an old one, deprecate and remove the old copy.
+  - Cross-link rather than copy-paste when referencing existing docs.
 - Keep generated artifacts reproducible: document the exact command and inputs used to regenerate.
 - Respect existing style guides and linters for docs; run formatters after edits.
 
